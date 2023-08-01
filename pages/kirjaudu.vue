@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen">
+  <div class="flex flex-col justify-center items-center min-h-screen">
     <div
       class="items-center justify-center flex w-full bg-amber-600 border-y-2 border-black mt-4 h-12"
     >
@@ -11,8 +11,8 @@
         v-model="input"
         placeholder="Anna kortin numero..."
       />
-      <CustomButton button-text="Kirjaudu" type="primary" :onClick="() => haeKayttaja(input)" />
-      <CustomButton button-text="Peruuta" type="danger" :onClick="takaisin" />
+      <CustomButton button-text="Kirjaudu" type="primary" :onClick="() => haeKayttaja(input)" properties="mt-10 w-full h-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" />
+      <CustomButton button-text="Peruuta" type="danger" :onClick="takaisin" properties="mt-10 w-full h-24 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"/>
     </div>
   </div>
 </template>

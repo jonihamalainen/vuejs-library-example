@@ -1,20 +1,16 @@
 <template>
   <div class="w-full">
-    <el-button
-      class="mt-10 w-full"
-      size="large"
-      :type="type"
+    <button
+      :class="properties"
       @click="handleClick"
     >
       {{ buttonText }}
-    </el-button>
+    </button>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-
-const { buttonText, onClick, type } = defineProps(['buttonText', 'onClick', 'type']);
+const { buttonText, onClick, properties } = defineProps(['buttonText', 'onClick', 'properties']);
 
 const handleClick = () => {
   if (typeof onClick === 'function') {
@@ -22,3 +18,4 @@ const handleClick = () => {
   }
 };
 </script>
+
