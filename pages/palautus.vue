@@ -40,10 +40,14 @@
         />
       </div>
     </div>
+    <div v-if="errorDataMessage.errorData.value?.isError">
+        <ErrorComponent/>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 const input: globalThis.Ref<string> = ref("");
+const errorDataMessage = useErrorState();
 const { palautaNide, setPalautusPaiva } = useSupabase();
 const palautusTiedot = usePalautusState();
 const palauta = async () => {

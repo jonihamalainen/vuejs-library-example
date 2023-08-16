@@ -3,7 +3,7 @@
     <div>
       <h1 class="text-3xl">Myöhästyneet lainat ja myöhästymismaksut:</h1>
       <h2 class="text-2xl">Nykyiset maksut: {{ kayttajaTiedot?.maksut }} €</h2>
-      <h2 class="text-2xl">Myöhästyneistä kertyvät uudet maksut: {{ uudetMaksut() }}€ </h2>
+      <h2 v-if="uudetMaksut() !== 0" class="text-2xl">Myöhästyneistä kertyvät uudet maksut: {{ uudetMaksut() }}€ </h2>
     </div>
     <div
       class="border-2 mt-2 text-xl p-2 w-full"
@@ -18,7 +18,7 @@
       <h1><b>Niteen myöhästymismaksu: </b>{{ maksuMaara(laina.erapaiva) }}€</h1>
     </div>
     <div v-else>
-      <h1>Ei myöhässä olevia lainoja</h1>
+      <h1 class="text-xl">Ei myöhässä olevia lainoja</h1>
     </div>
   </div>
 </template>

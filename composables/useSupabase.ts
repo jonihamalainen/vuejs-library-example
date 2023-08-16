@@ -1,10 +1,10 @@
-import { Kayttaja, Kirjatiedot, Nide, Teos } from "types";
+import { ErrorType, Kayttaja, Kirjatiedot, Nide, Teos } from "types";
 
 export const useSupabase = () => {
   const haeKayttaja = async (
     input: string,
     redirect: string
-  ): Promise<void | boolean> => {
+  ): Promise<void> => {
     const client = useSupabaseClient();
     try {
       const { data, error } = await client
@@ -17,11 +17,16 @@ export const useSupabase = () => {
       user.setUserData(data);
       navigateTo("/" + redirect);
     } catch (error) {
-      return true;
+      const errorDataMessage = useErrorState();
+      errorDataMessage.setErrorData({
+        isError: true,
+        viesti: "Käyttääjää ei löytynyt annetuilla tiedoilla",
+      });
     }
   };
   const muokkaaKayttajaa = async (kayttaja: Kayttaja): Promise<void> => {
     const client = useSupabaseClient<Kayttaja>();
+    const errorDataMessage = useErrorState();
     try {
       const { data, error } = await client
         .from("asiakkaat")
@@ -32,26 +37,32 @@ export const useSupabase = () => {
       const user = useUserState();
       user.setUserData(data);
     } catch (error) {
-      console.error(error);
+      const errorMessage: ErrorType = {
+        isError: true,
+        viesti: "Virhe yhteidessä tietokantaan",
+      };
+      errorDataMessage.setErrorData(errorMessage);
     }
   };
   const lisaaLainaus = async (input: string) => {
     const client = useSupabaseClient();
+    const errorDataMessage = useErrorState();
     try {
-      const { data, error } = await client
+      const { data, error: niteetError } = await client
         .from("niteet")
         .select("*")
         .eq("nide_id", input)
+        .is("lainaaja", null)
         .single();
-      if (error) throw error;
+      if (niteetError) throw niteetError;
       const nide: Nide = data;
       try {
-        const { data, error } = await client
+        const { data, error: teosError } = await client
           .from("teokset")
           .select("*")
           .eq("teos_id", nide.teos_id)
           .single();
-        if (error) throw error;
+        if (teosError) throw teosError;
         const teos: Teos = data;
         const erapaiva: string = haeEraPaiva(nide.lainaaika_vrk);
         const erapaivaDate: Date | null = dateConvert(erapaiva);
@@ -61,12 +72,28 @@ export const useSupabase = () => {
           erapaiva: erapaivaDate,
         };
         const lainausTiedot = useLainausState();
-        lainausTiedot.setLainausData(tiedot);
+        const exists: boolean | undefined =
+          lainausTiedot.lainausData.value?.some(
+            (item) => item.nide_tiedot.nide_id === tiedot.nide_tiedot.nide_id
+          );
+        if (exists) {
+          throw teosError;
+        } else {
+          lainausTiedot.setLainausData(tiedot);
+        }
       } catch (error) {
-        console.error(error);
+        const errorMessage: ErrorType = {
+          isError: true,
+          viesti: "Nide on jo lainattu",
+        };
+        errorDataMessage.setErrorData(errorMessage);
       }
     } catch (error) {
-      console.error(error);
+      const errorMessage: ErrorType = {
+        isError: true,
+        viesti: "Nidettä ei ole tai se on jo lainattu",
+      };
+      errorDataMessage.setErrorData(errorMessage);
     }
   };
 
@@ -92,28 +119,34 @@ export const useSupabase = () => {
         .upsert(nideData, { onConflict: "nide_id" });
       if (error) throw error;
     } catch (error) {
-      console.error(error);
+      const errorDataMessage = useErrorState();
+      const errorMessage: ErrorType = {
+        isError: true,
+        viesti: "Virhe yhteidessä tietokantaan",
+      };
+      errorDataMessage.setErrorData(errorMessage);
     }
   };
 
   const palautaNide = async (input: string): Promise<void> => {
     const client = useSupabaseClient();
+    const errorDataMessage = useErrorState();
     try {
-      const { data, error } = await client
+      const { data, error: nideError } = await client
         .from("niteet")
         .select("*")
         .eq("nide_id", input)
         .not("erapaiva", "is", null)
         .single();
-      if (error) throw error;
+      if (nideError) throw nideError;
       const nide: Nide = data;
       try {
-        const { data, error } = await client
+        const { data, error: teosError } = await client
           .from("teokset")
           .select("*")
           .eq("teos_id", nide.teos_id)
           .single();
-        if (error) throw error;
+        if (teosError) throw teosError;
         const teos: Teos = data;
         const tiedot: Kirjatiedot = {
           nide_tiedot: nide,
@@ -121,12 +154,28 @@ export const useSupabase = () => {
           erapaiva: nide.erapaiva,
         };
         const palautusTiedot = usePalautusState();
-        palautusTiedot.setPalautusData(tiedot);
+        const exists: boolean | undefined =
+        palautusTiedot.palautusData.value?.some(
+          (item) => item.nide_tiedot.nide_id === tiedot.nide_tiedot.nide_id
+        );
+        if (exists) {
+          throw teosError;
+        } else {
+          palautusTiedot.setPalautusData(tiedot);
+        }
       } catch (error) {
-        console.error(error);
+        const errorMessage: ErrorType = {
+          isError: true,
+          viesti: "Nide on jo palautettu",
+        };
+        errorDataMessage.setErrorData(errorMessage);
       }
     } catch (error) {
-      console.error(error);
+      const errorMessage: ErrorType = {
+        isError: true,
+        viesti: "Nidettä ei ole tai sitä ei ole lainattu",
+      };
+      errorDataMessage.setErrorData(errorMessage);
     }
   };
 
@@ -134,6 +183,7 @@ export const useSupabase = () => {
     palautuslista: Kirjatiedot[] | null
   ): Promise<void> => {
     const client = useSupabaseClient<Nide>();
+    const errorDataMessage = useErrorState();
     const tanaan: Date = new Date();
     const lainaaja: number | null | undefined =
       palautuslista?.[0]?.nide_tiedot.lainaaja;
@@ -167,16 +217,25 @@ export const useSupabase = () => {
         });
         if (error) throw error;
       } catch (error) {
-        console.error(error);
+        const errorMessage: ErrorType = {
+          isError: true,
+          viesti: "Virhe yhteidessä tietokantaan",
+        };
+        errorDataMessage.setErrorData(errorMessage);
       }
     } catch (error) {
-      console.error(error);
+      const errorMessage: ErrorType = {
+        isError: true,
+        viesti: "Virhe yhteidessä tietokantaan",
+      };
+      errorDataMessage.setErrorData(errorMessage);
     }
   };
 
   const haeKayttajanLainat = async (kayttaja: Kayttaja) => {
     const client = useSupabaseClient();
     const kayttajanLainaTiedot = useLainausState();
+    const errorDataMessage = useErrorState();
     kayttajanLainaTiedot.kayttajanLainausData.value = [];
     kayttajanLainaTiedot.lainatMyohassaData.value = [];
     try {
@@ -209,10 +268,18 @@ export const useSupabase = () => {
           }
         }
       } catch (error) {
-        console.error(error);
+        const errorMessage: ErrorType = {
+          isError: true,
+          viesti: "Virhe yhteidessä tietokantaan",
+        };
+        errorDataMessage.setErrorData(errorMessage);
       }
     } catch (error) {
-      console.error(error);
+      const errorMessage: ErrorType = {
+        isError: true,
+        viesti: "Virhe yhteidessä tietokantaan",
+      };
+      errorDataMessage.setErrorData(errorMessage);
     }
   };
 

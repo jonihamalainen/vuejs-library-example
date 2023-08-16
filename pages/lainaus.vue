@@ -43,6 +43,9 @@
           :onClick="eiKuittia"
         />
       </div>
+      <div v-if="errorDataMessage.errorData.value?.isError">
+        <ErrorComponent/>
+    </div>
     </div>
   </div>
 </template>
@@ -50,6 +53,8 @@
 import { Kayttaja, Kirjatiedot } from "types";
 const user = useUserState();
 const userName: Kayttaja = user.userData.value;
+const errorDataMessage = useErrorState();
+errorDataMessage.errorData.value = null;
 const input: globalThis.Ref<string> = ref("");
 const { lisaaLainaus, setErapaiva } = useSupabase();
 const lainaustiedot = useLainausState();

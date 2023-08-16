@@ -14,11 +14,16 @@
       <CustomButton button-text="Kirjaudu" :onClick="() => haeKayttaja(input, redirectSivu)" properties="mt-10 w-64 h-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" />
       <CustomButton button-text="Peruuta" :onClick="takaisin" properties="mt-10 w-64 h-24 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"/>
     </div>
+    <div v-if="errorDataMessage.errorData.value?.isError">
+        <ErrorComponent/>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
 const input: globalThis.Ref<string> = ref("");
+const errorDataMessage = useErrorState();
+errorDataMessage.errorData.value = null;
 const { haeKayttaja } = useSupabase();
 const sivuTiedot = useSivuState();
 let redirectSivu: string = sivuTiedot.sivuData.value;

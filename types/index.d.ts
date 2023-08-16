@@ -31,3 +31,8 @@ export interface Kirjatiedot {
   teos_tiedot: Teos;
   erapaiva: Date | null;
 }
+
+export interface ErrorType{
+  isError: boolean;
+  viesti: string;
+}
