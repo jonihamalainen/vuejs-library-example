@@ -34,15 +34,16 @@
         </div>
       </div>
       <div class="justify-center flex">
-        <h1>Maksut</h1>
+        <KayttajanMyohastyneet :kayttajaTiedot="userName" :lainat="kayttajanMyohastyneet"/>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { Kirjatiedot } from 'types';
+import { Kayttaja, Kirjatiedot } from 'types';
 
 const kayttajatiedot = useUserState();
+const userName: Kayttaja = kayttajatiedot.userData.value
 const {haeKayttajanLainat} = useSupabase();
 const lainausTiedot = useLainausState();
 await haeKayttajanLainat(kayttajatiedot.userData.value)
@@ -51,4 +52,5 @@ const toggleMuokkaa = () => {
   showMuokkaa.value = !showMuokkaa.value;
 };
 const kayttajanLainaukset: Kirjatiedot[] | null = lainausTiedot.kayttajanLainausData.value
+const kayttajanMyohastyneet: Kirjatiedot[] | null = lainausTiedot.lainatMyohassaData.value
 </script>

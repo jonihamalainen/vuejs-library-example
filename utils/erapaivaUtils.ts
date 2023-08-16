@@ -30,7 +30,8 @@ export const dateConvert = (dateString: string | null): Date | null => {
   return date;
 };
 
-export const paivaEro = (erapaiva: Date | null) => {
+export const maksuMaara = (erapaiva: Date | null): number => {
+  let uudetMaksut: number = 0;
   if (erapaiva !== null) {
     const tanaan: Date = new Date();
     const erapaivaDate: Date = new Date(erapaiva)
@@ -39,7 +40,12 @@ export const paivaEro = (erapaiva: Date | null) => {
     if (erapaivaTime < tanaanTime) {
       const erotus: number = tanaanTime - erapaivaTime;
       const paivat: number = Math.ceil(erotus / (1000 * 3600 * 24)) - 1;
-      return paivat;
+      if (paivat > 20) {
+        uudetMaksut += 6;
+      } else {
+        uudetMaksut += paivat * 0.3;
+      }
+      return uudetMaksut;
     } else {
       return 0
     }

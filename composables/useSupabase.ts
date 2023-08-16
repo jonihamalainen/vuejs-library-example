@@ -1,4 +1,3 @@
-import { set } from "@vueuse/core";
 import { Kayttaja, Kirjatiedot, Nide, Teos } from "types";
 
 export const useSupabase = () => {
@@ -158,12 +157,7 @@ export const useSupabase = () => {
         let uudetMaksut: number = 0.0;
         palautuslista?.forEach((palautus) => {
           if (palautus.erapaiva !== null) {
-            const paivat: number = paivaEro(palautus.erapaiva);
-            if (paivat > 20) {
-              uudetMaksut += 6;
-            } else {
-              uudetMaksut += paivat * 0.3;
-            }
+            uudetMaksut = maksuMaara(palautus.erapaiva);
           }
         });
         const client = useSupabaseClient<Kayttaja>();
@@ -182,8 +176,9 @@ export const useSupabase = () => {
 
   const haeKayttajanLainat = async (kayttaja: Kayttaja) => {
     const client = useSupabaseClient();
-    const kayttajanLainaTiedot = useLainausState()
+    const kayttajanLainaTiedot = useLainausState();
     kayttajanLainaTiedot.kayttajanLainausData.value = [];
+    kayttajanLainaTiedot.lainatMyohassaData.value = [];
     try {
       const { data, error } = await client
         .from("niteet")
@@ -206,8 +201,11 @@ export const useSupabase = () => {
               teos_tiedot: yksiTeos,
               erapaiva: yksiNide.erapaiva,
             };
-            const kayttajanlainausTiedot = useLainausState();
-            kayttajanlainausTiedot.setKayttajanLainausData(tiedot);
+            if (isLate(yksiNide.erapaiva)) {
+              kayttajanLainaTiedot.setLainatMyohassaData(tiedot);
+            } else {
+              kayttajanLainaTiedot.setKayttajanLainausData(tiedot);
+            }
           }
         }
       } catch (error) {

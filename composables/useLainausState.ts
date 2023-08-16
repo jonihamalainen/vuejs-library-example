@@ -2,6 +2,7 @@ import { Kirjatiedot } from "types"
 
 export const useLainausState = createGlobalState (
     () => {
+        const lainatMyohassaData = useState<Kirjatiedot[] | null>();
         const kayttajanLainausData = useState<Kirjatiedot[] | null>();
         const lainausData = useState<Kirjatiedot[] | null>();
 
@@ -19,6 +20,13 @@ export const useLainausState = createGlobalState (
           kayttajanLainausData.value.push(tiedot);
         };
 
-        return {lainausData, setLainausData, kayttajanLainausData, setKayttajanLainausData}
+        const setLainatMyohassaData = (tiedot: Kirjatiedot): void => {
+          if(!lainatMyohassaData.value){
+            lainatMyohassaData.value = [];
+          }
+          lainatMyohassaData.value.push(tiedot)
+        }
+
+        return {lainausData, setLainausData, kayttajanLainausData, setKayttajanLainausData, lainatMyohassaData, setLainatMyohassaData}
     }
 )
