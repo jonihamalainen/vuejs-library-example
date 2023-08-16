@@ -6,6 +6,7 @@ export interface Kayttaja {
   postinro: string;
   postitmp: string;
   puh: string;
+  maksut: number;
 }
 
 export interface Nide {
@@ -15,6 +16,7 @@ export interface Nide {
   tyyppi: string;
   erapaiva: Date | null;
   palautus_pvm: Date | null;
+  lainaaja: number | null;
 }
 
 export interface Teos {

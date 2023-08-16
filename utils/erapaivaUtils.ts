@@ -20,7 +20,7 @@ export const isLate = (date: Date | null): boolean => {
   return targetDate < currentDate;
 };
 
-export const dateConvert = (dateString: string | null): Date |null => {
+export const dateConvert = (dateString: string | null): Date | null => {
   if (!dateString) {
     return null;
   }
@@ -28,5 +28,22 @@ export const dateConvert = (dateString: string | null): Date |null => {
   const date: Date = new Date(year, month - 1, day);
 
   return date;
+};
 
+export const paivaEro = (erapaiva: Date | null) => {
+  if (erapaiva !== null) {
+    const tanaan: Date = new Date();
+    const erapaivaDate: Date = new Date(erapaiva)
+    const erapaivaTime: number = erapaivaDate.getTime()
+    const tanaanTime: number = tanaan.getTime()
+    if (erapaivaTime < tanaanTime) {
+      const erotus: number = tanaanTime - erapaivaTime;
+      const paivat: number = Math.ceil(erotus / (1000 * 3600 * 24)) - 1;
+      return paivat;
+    } else {
+      return 0
+    }
+  } else {
+    return 0
+  }
 };

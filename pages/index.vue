@@ -12,6 +12,7 @@
       <NuxtLink to="/lainaus">
         <div
           class="bg-amber-600 mx-8 text-2xl rounded-lg items-center justify-center flex h-24"
+          @click="sivuTiedot.setSivuData('lainaus')"
         >
           Lainaus
         </div>
@@ -28,10 +29,14 @@
       <NuxtLink to="/tiedot">
         <div
           class="bg-amber-600 mx-8 text-2xl rounded-lg items-center justify-center flex h-24"
-        >
+          @click="sivuTiedot.setSivuData('tiedot')"
+          >
           Omat tiedot
         </div></NuxtLink
       >
     </div>
   </div>
 </template>
+<script setup lang="ts">
+const sivuTiedot = useSivuState();
+</script>

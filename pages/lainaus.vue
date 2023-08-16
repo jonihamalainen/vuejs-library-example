@@ -95,7 +95,7 @@ const kuitilla = async (): Promise<void> => {
           "\n-------------------"
         );
       });
-    await setErapaiva(lainaustiedot.lainausData.value)
+    await setErapaiva(lainaustiedot.lainausData.value, userName.asiakasnro)
     console.log(kayttajaTiedot + kirjaTiedot);
     navigateTo("/");
     lainaustiedot.lainausData.value = [];
@@ -104,7 +104,7 @@ const kuitilla = async (): Promise<void> => {
   }
 };
 const eiKuittia = async (): Promise<void> => {
-  await setErapaiva(lainaustiedot.lainausData.value)
+  await setErapaiva(lainaustiedot.lainausData.value, userName.asiakasnro)
   lainaustiedot.lainausData.value = [];
   navigateTo("/");
 };

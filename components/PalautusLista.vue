@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <div class="flex flex-col">
+        <div>
         <h1 class="text-3xl">Palautukset:</h1>
     </div>
     <div class="border-2 mt-2 text-xl p-2 w-full"  v-if="props.palautukset?.length" v-for="palautus in props.palautukset">
@@ -12,6 +13,7 @@
     </div>
     <div  v-else>
         <h1>Ei lisättyjä palautuksia</h1>
+    </div>
     </div>
 </template>
 
