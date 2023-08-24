@@ -20,7 +20,7 @@ export const useSupabase = () => {
       const errorDataMessage = useErrorState();
       errorDataMessage.setErrorData({
         isError: true,
-        viesti: "Käyttääjää ei löytynyt annetuilla tiedoilla",
+        viesti: "Käyttäjää ei löytynyt annetuilla tiedoilla",
       });
     }
   };

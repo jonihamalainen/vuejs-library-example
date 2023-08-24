@@ -13,6 +13,7 @@
         <div class="flex flex-col">
           <div>
             <KayttajaTiedot v-if="!showMuokkaa" />
+            <CustomButton button-text="Peruuta" :onClick="takaisin" properties="mt-10 w-full h-24 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"/>
             <MuokkaaKayttajaTietoja v-if="showMuokkaa" :showMuokkaa="showMuokkaa" :toggleMuokkaa="toggleMuokkaa"/>
           </div>
           <div>
@@ -43,6 +44,9 @@
 import { Kayttaja, Kirjatiedot } from 'types';
 
 const kayttajatiedot = useUserState();
+const takaisin = (): void => {
+  navigateTo("/");
+};
 const userName: Kayttaja = kayttajatiedot.userData.value
 const {haeKayttajanLainat} = useSupabase();
 const lainausTiedot = useLainausState();

@@ -22,6 +22,7 @@
         :onClick="() => lisaaLainaus(input)"
         properties="mt-10 w-full h-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       />
+      <CustomButton button-text="Peruuta" :onClick="takaisin" properties="mt-10 w-full h-24 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"/>
     </div>
     <div class="grid grid-cols-3 gap-2 w-full h-3/6">
       <div class="justify-center flex">
@@ -58,6 +59,9 @@ errorDataMessage.errorData.value = null;
 const input: globalThis.Ref<string> = ref("");
 const { lisaaLainaus, setErapaiva } = useSupabase();
 const lainaustiedot = useLainausState();
+const takaisin = (): void => {
+  navigateTo("/");
+};
 const kuitilla = async (): Promise<void> => {
   const kayttajaLainaus: Kirjatiedot[] | null = lainaustiedot.lainausData.value;
   if (lainaustiedot.lainausData.value && lainaustiedot.lainausData.value) {
